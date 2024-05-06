@@ -26,17 +26,36 @@ data "aws_security_group" "sg-default" {
   }
 }
 
+resource “aws_vpc” “prod-vpc” {
+    cidr_block = “10.0.0.0/16”
+    enable_dns_support = “true” #gives you an internal domain name
+    enable_dns_hostnames = “true” #gives you an internal host name
+    enable_classiclink = “false”
+    instance_tenancy = “default”    
+    
+    tags {
+        Name = “prod-vpc”
+    }
+}
+
+
+
 resource "aws_subnet" "public-subnet2" {
   vpc_id                  = data.aws_vpc.vpc.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-east-1b"
+  availability_zone       = "us-east-1"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = var.subnet-name2
+    Name = "subnet-name2"
   }
 }
-
+resource "aws_internet_gateway" "prod-igw" {
+    vpc_id = "${aws_vpc.prod-vpc.id}"
+    tags {
+        Name = "prod-igw"
+    }
+}
 resource "aws_route_table" "rt2" {
   vpc_id = data.aws_vpc.vpc.id
   route {
