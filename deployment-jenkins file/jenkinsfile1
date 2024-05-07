@@ -96,7 +96,7 @@ pipeline {
                             git config user.name "gagnish"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
-                            imageTag=$(grep -oP '(?<=tetrisv1:)[^ ]+' deployment-service.yml)
+                            imageTag=$(grep -oP '(?<=amazon-clone:)[^ ]+' deployment-service.yml)
                             echo $imageTag
                             sed -i "s/amazon:${imageTag}/amazon:${BUILD_NUMBER}/" deployment-service.yml
                             git add deployment-service.yml
