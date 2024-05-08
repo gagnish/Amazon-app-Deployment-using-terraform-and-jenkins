@@ -89,7 +89,7 @@ pipeline {
                 GIT_USER_NAME = "gagnish"
             }
             steps {
-                dir('jenkinsfiles') {
+                dir('deployment-jenkins file') {
                     withCredentials([string(credentialsId: 'github1', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                             git config user.email "gagnishdhiman@gmail.com"
@@ -99,6 +99,7 @@ pipeline {
                             imageTag=$(grep -oP '(?<=amazon-clone:)[^ ]+' deployment-service.yml)
                             echo $imageTag
                             sed -i "s/amazon-clone:${imageTag}/amazon-clone:${BUILD_NUMBER}/" deployment-service.yml
+                            git pull deployment-service.yml
                             git add deployment-service.yml
                             git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                             git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
