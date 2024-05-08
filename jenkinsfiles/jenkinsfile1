@@ -99,7 +99,6 @@ pipeline {
                             imageTag=$(grep -oP '(?<=amazon-clone:)[^ ]+' deployment-service.yml)
                             echo $imageTag
                             sed -i "s/amazon-clone:${imageTag}/amazon-clone:${BUILD_NUMBER}/" deployment-service.yml
-                            git pull deployment-service.yml
                             git add deployment-service.yml
                             git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                             git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
