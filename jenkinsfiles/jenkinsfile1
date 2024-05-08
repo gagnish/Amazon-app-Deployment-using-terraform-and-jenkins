@@ -89,7 +89,7 @@ pipeline {
                 GIT_USER_NAME = "gagnish"
             }
             steps {
-                dir('deployment-jenkins file') {
+                dir('jenkinsfiles') {
                     withCredentials([string(credentialsId: 'github1', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                             git config user.email "gagnishdhiman@gmail.com"
