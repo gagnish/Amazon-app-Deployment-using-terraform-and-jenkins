@@ -20,9 +20,11 @@ pipeline{
         }
         stage("Sonarqube Analysis "){
             steps{
+                dir('Code1') {
                 withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Amazon \
-                    -Dsonar.projectKey=Amazon '''
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=code1 \
+                    -Dsonar.projectKey=code1 '''
+                }
                 }
             }
         }
@@ -40,34 +42,44 @@ pipeline{
         }
         stage('OWASP FS SCAN') {
             steps {
+                dir('Code1') {
                 dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-check'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
+        }
         stage('TRIVY FS SCAN') {
             steps {
+                dir('Code1') {
                 sh "trivy fs . > trivyfs.txt"
             }
         }
+        }
         stage("Docker Build & Push"){
             steps{
+                dir('Code1') {
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
-                       sh "docker build -t amazon-clone ."
-                       sh "docker tag amazon-clone gagnish/amazon-clone:latest "
-                       sh "docker push gagnish/amazon-clone:latest "
+                       sh "docker build -t code1 ."
+                       sh "docker tag code1 gagnish/code1:latest "
+                       sh "docker push gagnish/code1:latest "
                     }
+                }
                 }
             }
         }
         stage("TRIVY"){
             steps{
-                sh "trivy image gagnish/amazon-clone:latest > trivyimage.txt" 
+                dir('Code1') {
+                sh "trivy image gagnish/code1:latest > trivyimage.txt" 
             }
+        }
         }
         stage('Deploy to container'){
             steps{
-                sh 'docker run -d --name amazon-clone -p 3000:3000 gagnish/amazon-clone:latest'
+                dir('Code1') {
+                sh 'docker run -d --name code1 -p 4000:4000 gagnish/code1:latest'
+            }
             }
         }
     }
