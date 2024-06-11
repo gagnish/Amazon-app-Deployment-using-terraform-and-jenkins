@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: amazon
-        image: gagnish/amazon-clone:25
+        image: gagnish/amazon-clone:26
         ports:
         - containerPort: 3000   # Use port 3000
 
